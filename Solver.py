@@ -20,9 +20,17 @@ class Solver:
         if len(board) != 9:
             return False
 
-        for row in board:
+        for row_idx, row in enumerate(board):
             if len(row) != 9:
                 return False
+
+            for col_idx, col in enumerate(row):
+                if col != 0:
+                    board[row_idx][col_idx] = 0
+                    if not(self.num_is_legal(row_idx, col_idx, col, b=board)):
+                        return False
+                    board[row_idx][col_idx] = col
+                    
 
         return True
 
@@ -32,6 +40,7 @@ class Solver:
             self.board = board
         
         else:
+            print("Illegal board! \nUsing default...\n")
             self.board = Solver.DEFAULT_BOARD
 
 
@@ -57,13 +66,18 @@ class Solver:
                 print("------------------------- \n")
             
 
-    def num_is_legal(self, y, x, n):
+    def num_is_legal(self, y, x, n, b=None):
+        if b:
+            board = b
+        else:
+            board = self.board
+
         for i in range(0, 9):
-            if self.board[y][i] == n:
+            if board[y][i] == n:
                 return False
 
         for i in range(0, 9):
-            if self.board[i][x] == n:
+            if board[i][x] == n:
                 return False
 
         # check 3x3 subgrid of n
@@ -72,7 +86,7 @@ class Solver:
 
         for i in range(0, 3):
             for j in range(0, 3):
-                if self.board[y_sub_grid + i][x_sub_grid + j] == n:
+                if board[y_sub_grid + i][x_sub_grid + j] == n:
                     return False
 
         return True
